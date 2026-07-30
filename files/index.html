@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIAS APP - Plataforma de Gestión Vial y Residuos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo-placeholder">
+                <img src="logo.jpg" alt="Logo oficial de VIAS APP" class="logo-vias">
+                <span class="brand-name">VIAS APP</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" style="color: var(--color-verde-acento);">Inicio</a></li>
+                    <li><a href="verificacion.html">Verificación</a></li>
+                    <li><a href="ayuda.html">Ayuda</a></li>
+                    <li><a href="secciones.html">Secciones</a></li>
+                    <li><a href="mapa.html">Mapa</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="inicio">
+        <h1 class="brand-name" style="font-size: 3.5rem; margin-top: 20px;">VIAS APP</h1>
+        <p class="lema">"Cada paso sin tropiezo es un camino al progreso."</p>
+
+        <div style="max-width: 850px; margin: 0 auto 50px auto;">
+            <video controls preload="metadata" playsinline style="width: 100%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: block; background-color: #000;">
+                <source src="video_de_emprendimiento.mp4" type="video/mp4">
+                Tu navegador no soporta la reproducción de video HTML5.
+            </video>
+        </div>
+
+        <div class="info-empresa">
+            <div class="card-info">
+                <h3><i class="fa-solid fa-building-user" style="color: var(--color-verde-acento); margin-right: 10px;"></i>Quiénes Somos</h3>
+                <p><strong>VIAS APP</strong> es una microempresa tecnológica ecuatoriana consolidada por un equipo multidisciplinario de ingenieros y desarrolladores comprometidos con el cambio social. Nos especializamos en la creación de puentes digitales que facilitan la comunicación bidireccional entre la comunidad civil y las entidades de mantenimiento urbano. Creemos firmemente que la tecnología es la herramienta clave para transformar nuestras ciudades en espacios más habitables, seguros y sostenibles.</p>
+            </div>
+            <div class="card-info">
+                <h3><i class="fa-solid fa-gears" style="color: var(--color-verde-acento); margin-right: 10px;"></i>Qué Hacemos</h3>
+                <p>Nuestra plataforma centraliza, procesa y categoriza reportes urbanos en tiempo real enfocándose en dos áreas críticas: el estado de la infraestructura vial (baches, fisuras) y la acumulación de desechos públicos. A través de un sofisticado sistema de geolocalización y priorización de datos, permitimos que las denuncias de la comunidad se traduzcan de manera inmediata en órdenes de trabajo optimizadas para las cuadrillas de reparación y limpieza urbana.</p>
+            </div>
+            <div class="card-info">
+                <h3><i class="fa-solid fa-bullseye" style="color: var(--color-verde-acento); margin-right: 10px;"></i>Nuestra Misión</h3>
+                <p>Mitigar el deterioro vial y optimizar la gestión de residuos sólidos en el territorio ecuatoriano mediante la innovación tecnológica y la participación activa de los ciudadanos. Nos proyectamos como el estándar nacional para la gestión de incidencias de infraestructura pública, reduciendo los tiempos de respuesta de semanas a un máximo de 72 horas laborales, garantizando así el bienestar general y el libre tránsito seguro de todos los ecuatorianos.</p>
+            </div>
+        </div>
+
+        <div class="pasos-uso">
+            <h3 style="font-size: 1.8rem; margin-bottom: 20px;">¿Cómo utilizar la plataforma de manera correcta?</h3>
+            <p style="color: #bbb; max-width: 800px; margin: 0 auto 30px auto;">Sigue nuestro protocolo estandarizado de tres pasos para asegurar que tu reporte sea validado, analizado y resuelto por nuestro equipo técnico en el menor tiempo posible.</p>
+            <div class="pasos-grid">
+                <div class="paso">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <h4>1. Verificación Ciudadana</h4>
+                    <p>Accede al módulo de Verificación e introduce tus datos de identidad para mitigar reportes falsos y garantizar la autenticidad de la incidencia.</p>
+                </div>
+                <div class="paso">
+                    <i class="fa-solid fa-magnifying-glass-location"></i>
+                    <h4>2. Geolocalización y Captura</h4>
+                    <p>Identifica la anomalía (bache o basura acumulada), toma una captura fotográfica clara y precisa de la escena, y determina la calle exacta.</p>
+                </div>
+                <div class="paso">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <h4>3. Envío del Reporte</h4>
+                    <p>Presiona el botón "Reportar problema", completa el formulario estructurado adjuntando la evidencia y envía los datos para su procesamiento inmediato.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin: 50px 0;">
+            <a href="verificacion.html" class="btn-reportar" style="padding: 18px 40px; font-size: 1.3rem;">
+                <i class="fa-solid fa-triangle-exclamation"></i> Registrar un Reporte de Incidencia
+            </a>
+        </div>
+    </section>
+
+    <section id="roles-equipo" style="background-color: var(--color-gris-claro); border-top: 1px solid #ddd;">
+        <h2 class="section-title">Estructura Organizacional y Roles</h2>
+        <p style="text-align: center; max-width: 800px; margin: -20px auto 40px auto; color: #555;">
+            Conoce el organigrama y las responsabilidades específicas de cada uno de los miembros fundadores de <strong>VIAS APP</strong>, quienes hacen posible la operación de la plataforma día a día.
+        </p>
+
+        <div class="info-empresa" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+            <div class="card-info" style="border-top: 4px solid var(--color-verde-acento);">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <i class="fa-solid fa-user-tie" style="font-size: 2.5rem; color: var(--color-verde-acento);"></i>
+                    <div>
+                        <h4 style="font-size: 1.2rem; margin: 0;">Walther Falcones</h4>
+                        <span style="font-size: 0.85rem; color: #666; font-weight: bold; text-transform: uppercase;">Director Ejecutivo (CEO)</span>
+                    </div>
+                </div>
+                <p>Responsable de la dirección estratégica, alianzas con municipios y entidades públicas ecuatorianas, y la toma de decisiones corporativas globales para la expansión de VIAS APP.</p>
+            </div>
+
+            <div class="card-info" style="border-top: 4px solid var(--color-verde-acento);">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <i class="fa-solid fa-laptop-code" style="font-size: 2.5rem; color: var(--color-verde-acento);"></i>
+                    <div>
+                        <h4 style="font-size: 1.2rem; margin: 0;">George Chancay</h4>
+                        <span style="font-size: 0.85rem; color: #666; font-weight: bold; text-transform: uppercase;">Director del departamento de Tecnología (CTO)</span>
+                    </div>
+                </div>
+                <p>Encargado de la arquitectura de software, el desarrollo de la plataforma web, base de datos y la integración futura de algoritmos de inteligencia artificial para detectar baches.</p>
+            </div>
+
+            <div class="card-info" style="border-top: 4px solid var(--color-verde-acento);">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <i class="fa-solid fa-map-location-dot" style="font-size: 2.5rem; color: var(--color-verde-acento);"></i>
+                    <div>
+                        <h4 style="font-size: 1.2rem; margin: 0;">Isaac Navarrete</h4>
+                        <span style="font-size: 0.85rem; color: #666; font-weight: bold; text-transform: uppercase;">Director del departamento de Sistemas SIG</span>
+                    </div>
+                </div>
+                <p>Especialista en Sistemas de Información Geográfica (SIG). Responsable del mapeo territorial de incidencias y la optimización de rutas para el personal de field en Ecuador.</p>
+            </div>
+
+            <div class="card-info" style="border-top: 4px solid var(--color-verde-acento);">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <i class="fa-solid fa-comments" style="font-size: 2.5rem; color: var(--color-verde-acento);"></i>
+                    <div>
+                        <h4 style="font-size: 1.2rem; margin: 0;">Eliana Sancan</h4>
+                        <span style="font-size: 0.85rem; color: #666; font-weight: bold; text-transform: uppercase;">Directora del departamento de Operaciones & SAC</span>
+                    </div>
+                </div>
+                <p>Gestiona la atención al ciudadano, validación de la veracidad de reportes complejos y coordina de manera directa con las comunidades vecinales para capacitaciones de uso.</p>
+            </div>
+
+            <div class="card-info" style="border-top: 4px solid var(--color-verde-acento);">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <i class="fa-solid fa-scale-balanced" style="font-size: 2.5rem; color: var(--color-verde-acento);"></i>
+                    <div>
+                        <h4 style="font-size: 1.2rem; margin: 0;">Lady Plua</h4>
+                        <span style="font-size: 0.85rem; color: #666; font-weight: bold; text-transform: uppercase;">Directora del departamento Legal y de Cumplimiento</span>
+                    </div>
+                </div>
+                <p>Asegura el cumplimiento estricto de la ley de protección de datos ecuatoriana (LODP) en los formularios de verificación y gestiona las licitaciones públicas.</p>
+            </div>
+
+            <div class="card-info" style="border-top: 4px solid var(--color-verde-acento);">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <i class="fa-solid fa-chart-line" style="font-size: 2.5rem; color: var(--color-verde-acento);"></i>
+                    <div>
+                        <h4 style="font-size: 1.2rem; margin: 0;">Maybelin Carranza</h4>
+                        <span style="font-size: 0.85rem; color: #666; font-weight: bold; text-transform: uppercase;">Directora del departamento Financiero y de Marketing</span>
+                    </div>
+                </div>
+                <p>Encargada de la sostenibilidad financiera de la microempresa, gestión de presupuestos para materiales de reparación vial y campañas de marketing social en el país.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px 0;">
+            <p>&copy; 2026 VIAS APP. Todos los derechos reservados. Solución Vial e Higiénica para Ecuador.</p>
+            <div>
+                <a href="index.html" style="color: #888; text-decoration: none; margin-right: 15px; font-size: 0.85rem;">Términos de Servicio</a>
+                <a href="index.html" style="color: #888; text-decoration: none; font-size: 0.85rem;">Política de Privacidad</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
