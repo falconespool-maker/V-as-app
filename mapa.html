@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIAS APP - Mapa de Control Geográfico y Reportes</title>
+    <!-- Iconografía oficial de FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet.css para mapas interactivos reales estilo Google Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="estilos.css">
+    <style>
+        /* Variables de respaldo por si estilos.css no las define */
+        :root {
+            --color-negro: #111111;
+            --color-blanco: #ffffff;
+            --color-gris-claro: #f4f4f4;
+            --color-verde-acento: #0b6623;
+            --color-verde-hover: #084c1a;
+            --color-rojo-alerta: #e74c3c;
+            --color-azul-ubicacion: #3498db;
+        }
+
+        /* Contenedor principal del mapa interactivo real */
+        .map-container {
+            position: relative;
+            height: 560px;
+            background-color: #e5e3df; /* Color clásico de carga de Google Maps */
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
+
+        /* Estilo del mapa de Leaflet */
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Leyendas y banners flotantes sobre el mapa */
+        .map-floating-banner {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            z-index: 1000; /* Debe estar por encima de las capas de Leaflet */
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            max-width: 300px;
+            line-height: 1.4;
+        }
+
+        /* Estilo de tarjetas de estación activas/seleccionadas en el panel izquierdo */
+        .station-card {
+            border: 1px solid #eeeeee;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background-color: #fafafa;
+        }
+
+        .station-card:hover {
+            border-color: var(--color-rojo-alerta);
+            background-color: #fffaf9;
+            transform: translateX(3px);
+        }
+
+        .station-card.active {
+            border-left: 4px solid var(--color-rojo-alerta);
+            border-color: #ddd;
+            background-color: #fff4f2;
+        }
+
+        /* Estilos personalizados para los popups del mapa */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+            padding: 5px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .popup-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: var(--color-negro);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-popup-report {
+            display: inline-block;
+            background-color: var(--color-rojo-alerta);
+            color: #ffffff !important;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.75rem;
+            margin-top: 8px;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn-popup-report:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo-placeholder">
+                <img src="logo.jpg" alt="Logo oficial de VIAS APP" class="logo-vias">
+                <span class="brand-name">VIAS APP</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="verificacion.html">Verificación</a></li>
+                    <li><a href="ayuda.html">Ayuda</a></li>
+                    <li><a href="secciones.html">Secciones</a></li>
+                    <li><a href="mapa.html" style="color: var(--color-verde-acento);">Mapa</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="ubicaciones" style="padding-top: 140px; padding-bottom: 80px;">
+        <h2 class="section-title">Mapa Territorial de Estaciones</h2>
+        <p style="text-align: center; max-width: 800px; margin: -20px auto 40px auto; color: #555;">
+            Explora el mapa interactivo de <strong>Guayaquil</strong>. Puedes interactuar de dos formas: haz clic en los <strong>puntos rojos</strong> para encontrar nuestras estaciones de ayuda presencial, o bien **haz clic en cualquier calle del mapa para colocar tu propio punto azul** de ubicación y registrar un reporte personalizado.
+        </p>
+
+        <div style="display: grid; grid-template-columns: 310px 1fr; gap: 30px; margin-bottom: 40px; background-color: var(--color-gris-claro); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--color-verde-acento);">
+            
+            <!-- PANEL DE CONTROL LATERAL CON BUSCADOR -->
+            <div style="background-color: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; gap: 20px; min-height: 500px;">
+                <h3 style="font-size: 1.1rem; border-bottom: 2px solid #ddd; padding-bottom: 8px; color: var(--color-negro); text-transform: uppercase;">
+                    <i class="fa-solid fa-house-medical" style="color: var(--color-rojo-alerta); margin-right: 8px;"></i> Estaciones GYE
+                </h3>
+
+                <!-- Buscador de estaciones en tiempo real -->
+                <div style="position: relative;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 10px; top: 11px; color: #888; font-size: 0.85rem;"></i>
+                    <input type="text" id="search-station" placeholder="Buscar por sector o calle..." onkeyup="filterStations()" style="width: 100%; padding: 8px 10px 8px 32px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; outline: none; transition: border-color 0.2s;">
+                </div>
+                
+                <!-- Contenedor de la lista de tarjetas de estaciones -->
+                <div id="station-list" style="display: flex; flex-direction: column; gap: 12px; max-height: 280px; overflow-y: auto; padding-right: 5px;">
+                    <!-- Se inyectarán dinámicamente -->
+                </div>
+
+                <div style="margin-top: auto; padding-top: 15px; border-top: 1px dashed #ccc; font-size: 0.8rem; color: #555; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="width: 12px; height: 12px; border-radius: 50%; background-color: var(--color-rojo-alerta); display: inline-block;"></span>
+                        <span>Estaciones de Ayuda (Punto Rojo)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="width: 12px; height: 12px; border-radius: 50%; background-color: var(--color-azul-ubicacion); display: inline-block;"></span>
+                        <span>Tu Ubicación Creada (Punto Azul)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAPA INTERACTIVO REAL (Estilo Google Maps de Guayaquil) -->
+            <div class="map-container">
+                <!-- Banner Flotante de Instrucción Interactivas -->
+                <div class="map-floating-banner">
+                    <strong style="color: var(--color-verde-acento); display: block; margin-bottom: 4px;"><i class="fa-solid fa-circle-info"></i> Modo Interactivo Activo</strong>
+                    Haz clic en cualquier punto de Guayaquil para marcar tu propia ubicación con un <strong>punto azul</strong> y enviar un reporte directo.
+                </div>
+
+                <!-- Contenedor donde Leaflet inyectará el mapa -->
+                <div id="map"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px 0;">
+            <p>&copy; 2026 VIAS APP. Todos los derechos reservados. Solución Vial e Higiénica para Ecuador.</p>
+            <div>
+                <a href="index.html" style="color: #888; text-decoration: none; margin-right: 15px; font-size: 0.85rem;">Términos de Servicio</a>
+                <a href="index.html" style="color: #888; text-decoration: none; font-size: 0.85rem;">Política de Privacidad</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts de Leaflet.js para el mapeo cartográfico interactivo real -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        // Datos de las estaciones oficiales de VIAS APP en Guayaquil
+        const estacionesGye = [
+            {
+                id: "ST-CENTRO",
+                name: "Estación de Ayuda - Centro Cívico",
+                address: "Av. Quito y El Oro (Frente al Parque Forestal)",
+                hours: "08:00 AM - 18:00 PM (Lunes a Sábado)",
+                manager: "Walther Falcones",
+                coords: [-2.2131, -79.8974] // Coordenadas reales de Guayaquil
+            },
+            {
+                id: "ST-NORTE",
+                name: "Estación de Ayuda - Alborada",
+                address: "Av. Rodolfo Baquerizo Nazur y Demetrio Aguilera",
+                hours: "08:30 AM - 17:30 PM (Lunes a Viernes)",
+                manager: "George Chancay",
+                coords: [-2.1408, -79.8976]
+            },
+            {
+                id: "ST-URDESA",
+                name: "Estación de Ayuda - Urdesa",
+                address: "Av. Víctor Emilio Estrada y Las Monjas",
+                hours: "09:00 AM - 19:00 PM (Lunes a Sábado)",
+                manager: "Eliana Sancan",
+                coords: [-2.1628, -79.9103]
+            },
+            {
+                id: "ST-SUR",
+                name: "Estación de Ayuda - Pradera",
+                address: "Av. Domingo Comín y Av. Pío Jaramillo",
+                hours: "08:00 AM - 17:00 PM (Lunes a Viernes)",
+                manager: "Isaac Navarrete",
+                coords: [-2.2405, -79.8921]
+            },
+            {
+                id: "ST-TERMINAL",
+                name: "Estación de Ayuda - Terminal Terrestre",
+                address: "Av. Benjamín Rosales (Frente al Terminal)",
+                hours: "07:00 AM - 21:00 PM (Todos los días)",
+                manager: "Lady Plua",
+                coords: [-2.1481, -79.8659]
+            }
+        ];
+
+        let map;
+        let markers = {};
+        let userMarker = null; // Guardará el marcador del "Punto Azul" del usuario
+
+        // Inicializar el mapa centrado en Guayaquil con un estilo limpio similar a Google Maps
+        function initMap() {
+            // Coordenadas céntricas de Guayaquil (-2.1894, -79.8890)
+            map = L.map('map', {
+                center: [-2.175, -79.89],
+                zoom: 13,
+                zoomControl: true
+            });
+
+            // Usamos un estilo de mosaico claro similar a las calles limpias de Google Maps (CartoDB Positron)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Icono personalizado Rojo para las estaciones oficiales
+            const redIcon = L.divIcon({
+                html: `<div style="position: relative;">
+                         <div style="position: absolute; width: 14px; height: 14px; background-color: #e74c3c; border: 2.5px solid #fff; border-radius: 50%; box-shadow: 0 0 8px rgba(231,76,60,0.8); transform: translate(-50%, -50%);"></div>
+                         <div style="position: absolute; width: 30px; height: 30px; border: 2px solid #e74c3c; border-radius: 50%; transform: translate(-50%, -50%); animation: pulse-red 2s infinite; pointer-events: none;"></div>
+                       </div>`,
+                className: '',
+                iconSize: [0, 0]
+            });
+
+            // Estilos CSS para el pulso del punto rojo interactivo
+            const styleSheet = document.createElement("style");
+            styleSheet.innerText = `
+                @keyframes pulse-red {
+                    0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+                    100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+                }
+                @keyframes pulse-blue {
+                    0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+                    100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(styleSheet);
+
+            // Dibujar las estaciones en el mapa interactivo
+            estacionesGye.forEach(st => {
+                const marker = L.marker(st.coords, { icon: redIcon }).addTo(map);
+                
+                // Popup de alta calidad al hacer clic en un punto rojo
+                const popupContent = `
+                    <div style="min-width: 200px;">
+                        <div class="popup-title"><i class="fa-solid fa-house-medical" style="color: #e74c3c;"></i> ${st.name}</div>
+                        <p style="margin: 3px 0; font-size: 0.8rem; color: #555;"><strong>Dirección:</strong> ${st.address}</p>
+                        <p style="margin: 3px 0; font-size: 0.8rem; color: #555;"><strong>Horario:</strong> ${st.hours}</p>
+                        <p style="margin: 3px 0; font-size: 0.8rem; color: #0b6623;"><strong>Encargado:</strong> ${st.manager}</p>
+                        <a href="ayuda.html?estacion=${st.id}" class="btn-popup-report"><i class="fa-solid fa-circle-check"></i> Reportar en esta Estación</a>
+                    </div>
+                `;
+                marker.bindPopup(popupContent);
+                
+                // Guardar referencia para interacción cruzada
+                markers[st.id] = marker;
+
+                // Evento al abrir el popup para sincronizar con la lista lateral
+                marker.on('popupopen', () => {
+                    highlightCard(st.id);
+                });
+            });
+
+            // --- INTERACTIVIDAD PARA EL PUNTO AZUL DEL USUARIO ---
+            // Cuando el usuario hace clic en cualquier parte del mapa, coloca/mueve su marcador azul interactivo
+            map.on('click', function(e) {
+                const clickCoords = e.latlng;
+
+                // Icono interactivo azul con efecto de pulso (Estilo de GPS/Ubicación en Google Maps)
+                const blueIcon = L.divIcon({
+                    html: `<div style="position: relative;">
+                             <div style="position: absolute; width: 16px; height: 16px; background-color: #3498db; border: 2.5px solid #fff; border-radius: 50%; box-shadow: 0 0 10px rgba(52,152,219,0.9); transform: translate(-50%, -50%);"></div>
+                             <div style="position: absolute; width: 34px; height: 34px; border: 2px solid #3498db; border-radius: 50%; transform: translate(-50%, -50%); animation: pulse-blue 1.8s infinite; pointer-events: none;"></div>
+                           </div>`,
+                    className: '',
+                    iconSize: [0, 0]
+                });
+
+                if (userMarker) {
+                    // Si ya existe el punto azul, moverlo a la nueva posición clicada
+                    userMarker.setLatLng(clickCoords);
+                } else {
+                    // Si no existe, crear el marcador del punto azul por primera vez
+                    userMarker = L.marker(clickCoords, { icon: blueIcon }).addTo(map);
+                }
+
+                // Generar un popup interactivo que extrae dinámicamente las coordenadas geográficas del punto azul
+                const userPopupContent = `
+                    <div style="min-width: 200px;">
+                        <div class="popup-title" style="color: #3498db;"><i class="fa-solid fa-location-dot"></i> ¡Tu Ubicación Marcada!</div>
+                        <p style="margin: 3px 0; font-size: 0.8rem; color: #555;">Has colocado un pin de ayuda personalizado.</p>
+                        <p style="margin: 5px 0; font-family: monospace; font-size: 0.75rem; background: #f4f4f4; padding: 4px; border-radius: 4px;">
+                            LAT: ${clickCoords.lat.toFixed(5)}<br>LNG: ${clickCoords.lng.toFixed(5)}
+                        </p>
+                        <a href="ayuda.html?lat=${clickCoords.lat.toFixed(5)}&lng=${clickCoords.lng.toFixed(5)}" class="btn-popup-report" style="background-color: #3498db;"><i class="fa-solid fa-bullhorn"></i> Enviar Reporte Desde Aquí</a>
+                    </div>
+                `;
+                userMarker.bindPopup(userPopupContent).openPopup();
+                map.setView(clickCoords, map.getZoom()); // Suavizar la cámara al punto azul
+            });
+        }
+
+        // Renderizar tarjetas en la columna izquierda
+        function renderStationList() {
+            const listContainer = document.getElementById('station-list');
+            const searchQuery = document.getElementById('search-station').value.toLowerCase();
+            listContainer.innerHTML = '';
+
+            estacionesGye.forEach(st => {
+                const matchesSearch = st.name.toLowerCase().includes(searchQuery) || 
+                                      st.address.toLowerCase().includes(searchQuery) ||
+                                      st.manager.toLowerCase().includes(searchQuery);
+                if (!matchesSearch) return;
+
+                const card = document.createElement('div');
+                card.className = "station-card";
+                card.id = `card-${st.id}`;
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <strong style="font-size: 0.85rem; color: var(--color-negro);">${st.name}</strong>
+                        <i class="fa-solid fa-location-arrow" style="color: var(--color-rojo-alerta);"></i>
+                    </div>
+                    <p style="font-size: 0.72rem; color: #666; line-height: 1.3; margin-bottom: 5px;">${st.address}</p>
+                    <div style="font-size: 0.68rem; color: #888; display: flex; justify-content: space-between;">
+                        <span><i class="fa-solid fa-user-tie"></i> ${st.manager}</span>
+                    </div>
+                `;
+                
+                // Al hacer clic en la tarjeta lateral, vuela suavemente hacia la estación en el mapa real y abre su popup
+                card.onclick = () => {
+                    selectStationOnMap(st);
+                };
+                listContainer.appendChild(card);
+            });
+        }
+
+        function filterStations() {
+            renderStationList();
+        }
+
+        // Ir a la estación en el mapa real
+        function selectStationOnMap(st) {
+            highlightCard(st.id);
+            if (markers[st.id]) {
+                map.setView(st.coords, 15); // Hace zoom a nivel de calle en la estación oficial
+                markers[st.id].openPopup();
+            }
+        }
+
+        // Resaltar visualmente la tarjeta de la lista izquierda
+        function highlightCard(id) {
+            document.querySelectorAll('.station-card').forEach(el => el.classList.remove('active'));
+            const activeCard = document.getElementById(`card-${id}`);
+            if (activeCard) {
+                activeCard.classList.add('active');
+                activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        window.onload = function() {
+            initMap();
+            renderStationList();
+        };
+    </script>
+</body>
+</html>
